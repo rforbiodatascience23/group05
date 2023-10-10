@@ -96,7 +96,16 @@ list5 <- c("Subh", "Emmanuel", "Chuang", "Reka", "Adomas")
 list5
 ```
 
+## New Analysis
+
+```{r}
+a <- 5
+b <- 7
+a + b
+```
+
 # Reka
+
 
 ```{r}
 library(tidyverse)
@@ -116,6 +125,7 @@ expand.grid(x = xy,
   theme_void() +
   coord_polar()
 ```
+>>>>>>> main
 
 # Emmanuel
 
