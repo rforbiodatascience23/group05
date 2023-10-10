@@ -7,6 +7,63 @@ editor: visual
 # Adomas
 
 # Chuang
+```{r}
+"Sub is the best captain" |> 
+  print()
+```
+```{r}
+# Load tidyverse
+library(tidyverse)
+
+# Define colors
+saffron <- "#FF9933"
+white <- "#FFFFFF"
+green <- "#138808"
+navy_blue <- "#000080"
+
+# Create a dataframe to define layers for colors
+flag <- data.frame(
+  xmin = c(0, 0, 0),
+  xmax = c(10, 10, 10),
+  ymin = c(0, 5, 10),
+  ymax = c(5, 10, 15),
+  color = c(green, white, saffron)
+)
+
+# Basic plot
+p <- ggplot() +
+  geom_rect(data = flag, 
+            aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, fill = color),
+            color = "black") +
+  coord_fixed(ratio = 1) +
+  theme_void() +
+  theme(legend.position = "none")
+
+# Adding the Ashoka Chakra
+p <- p + 
+  geom_polygon(data = data.frame(x = c(5, 5.5, 5), y = c(10, 10, 10.5)), 
+               aes(x, y), 
+               fill = navy_blue,
+               color = navy_blue) +
+  geom_polygon(data = data.frame(x = c(5, 5.5, 5), y = c(10, 10, 9.5)), 
+               aes(x, y), 
+               fill = navy_blue,
+               color = navy_blue)
+
+# 24 spokes in the Chakra
+for(angle in seq(0, 360-15, by = 15)){
+  x = 5 + 0.5 * cos(angle * pi / 180)
+  y = 10 + 0.5 * sin(angle * pi / 180)
+  
+  p <- p + geom_line(aes(x = c(5, x), y = c(10, y)), color = navy_blue)
+}
+
+# Display flag
+print(p)
+
+```
+
+
 
 # Subhayan
 
