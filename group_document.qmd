@@ -13,3 +13,20 @@ editor: visual
 # Reka
 
 # Emmanuel
+
+Loading tidyverse
+
+```{r}
+#| eval: FALSE
+library(tidyverse)
+```
+
+Plotting for the diamonds dataset
+
+```{r}
+diamonds |> 
+	filter(x*y*z<1000) |> 
+	ggplot(aes(x=x*y*z, y=price)) + 
+	geom_point(aes(color=color)) +
+	labs(title="Relation between volume and price in the diamonds dataset (stratified on the color)", x="Volume of the diamond", y="Price of the diamond")
+```
