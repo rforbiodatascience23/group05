@@ -19,6 +19,8 @@ a <- b*7
 
 # Reka
 
+library(tidyverse)
+
 # Emmanuel
 
 Loading tidyverse
