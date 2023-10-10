@@ -14,10 +14,12 @@ a <- b*7
 ```
 
 # Chuang
+
 ```{r}
 "Sub is the best captain" |> 
   print()
 ```
+
 ```{r}
 # Load tidyverse
 library(tidyverse)
@@ -70,8 +72,6 @@ print(p)
 
 ```
 
-
-
 # Subhayan
 
 ```{r}
@@ -85,22 +85,17 @@ list5 <- c("Subh", "Emmanuel", "Chuang", "Reka", "Adomas")
 list5
 ```
 
+## New Analysis
+
+```{r}
+a <- 5
+b <- 7
+a + b
+```
+
 # Reka
 
-xy <- seq(from = -3,
-          to = 3, 
-          by = 0.01)
-expand.grid(x = xy,
-            y = xy) |>
-  ggplot(
-    mapping = aes(
-      x = (1 - x - sin(y^2)),
-      y = (1 + y - cos(x^2)))) +
-  geom_point(alpha = 0.05,
-             shape = 20,
-             size = 0) +
-  theme_void() +
-  coord_polar()
+xy \<- seq(from = -3, to = 3, by = 0.01) expand.grid(x = xy, y = xy) \|\> ggplot( mapping = aes( x = (1 - x - sin(y\^2)), y = (1 + y - cos(x\^2)))) + geom_point(alpha = 0.05, shape = 20, size = 0) + theme_void() + coord_polar()
 
 # Emmanuel
 
