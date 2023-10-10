@@ -1,0 +1,84 @@
+---
+title: "assignment"
+format: html
+editor: visual
+---
+
+## Load library
+
+```{r}
+#| eval:FALSE
+library(tidyverse)
+library(broom)
+biopsy <- read_csv("https://wilkelab.org/classes/SDS348/data_sets/biopsy.csv")
+```
+
+## PCA (Emmanuel)
+
+```{r}
+biopsy |>
+  sample_n(5)
+```
+
+```{r}
+pca_fit <- biopsy |>
+  # We select only numerical data
+  select(where(is.numeric)) |>
+  # Scaling the data (variance and mean)
+  scale() |>
+  # Calculating the PCA
+  prcomp()
+```
+
+### Projection over the two principal components
+
+```{r}
+pca_fit |>
+  # Adding the column from PCA to biopsy dataset
+  augment(biopsy) |>
+  # Plotting the projection on PC1 and PC2 stratifying with the outcome
+  ggplot(aes(.fittedPC1, .fittedPC2, color = outcome)) +
+  geom_point()
+  
+```
+
+### Rotation matrix of the principal components
+
+```{r}
+# How to plot the arrows for our graph
+arrow_style <- arrow(
+  angle = 20, ends = "first", type = "closed", length = grid::unit(8, "pt")
+)
+
+pca_fit |>
+  # Selecting the correct matrix
+  tidy(matrix = "rotation") |>
+  # We need to have the PC values for each attributes (on the same row)
+  pivot_wider(names_from = "PC", names_prefix = "PC", values_from = "value") |>
+  # Plotting the direction of each attributes according to PC1 and PC2
+  ggplot(aes(PC1, PC2)) + 
+  geom_segment(xend = 0, yend = 0, arrow = arrow_style) + 
+  geom_text(
+    aes(label = column),
+    hjust = 1, nudge_x = -0.02, 
+    color = "#904C2F"
+  ) +
+  xlim(-1.25, .5) + ylim(-.5, 1) +
+  coord_fixed()
+
+```
+
+### Variance explained by the principal components
+
+```{r}
+pca_fit %>%
+  # Selecting eigenvalues matrix because it contains the percent explain by each PC
+  tidy(matrix = "eigenvalues") %>%
+  ggplot(aes(PC, percent)) +
+  geom_col(fill = "#56B4E9", alpha = 0.8) +
+  scale_x_continuous(breaks = 1:9) +
+  scale_y_continuous(
+    labels = scales::percent_format(),
+    expand = expansion(mult = c(0, 0.01))
+  )
+```
