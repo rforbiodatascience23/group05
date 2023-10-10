@@ -10,6 +10,17 @@ editor: visual
 
 # Subhayan
 
+```{r}
+
+#| echo: false
+
+library(tidyverse)
+
+list5 <- c("Subh", "Emmanuel", "Chuang", "Reka", "Adomas")
+
+list5
+```
+
 # Reka
 
 # Emmanuel
