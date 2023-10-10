@@ -33,7 +33,7 @@ pca_fit <- biopsy |>
 
 ### Projection over the two principal components
 
-```{r}
+```{r fig.width = 8}
 pca_fit |>
   # Adding the column from PCA to biopsy dataset
   augment(biopsy) |>
@@ -45,7 +45,7 @@ pca_fit |>
 
 ### Rotation matrix of the principal components
 
-```{r}
+```{r fig.width = 8}
 # How to plot the arrows for our graph
 arrow_style <- arrow(
   angle = 20, ends = "first", type = "closed", length = grid::unit(8, "pt")
@@ -71,7 +71,7 @@ pca_fit |>
 
 ### Variance explained by the principal components
 
-```{r}
+```{r fig.width = 6}
 pca_fit %>%
   # Selecting eigenvalues matrix because it contains the percent explain by each PC
   tidy(matrix = "eigenvalues") %>%
