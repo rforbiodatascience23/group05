@@ -11,13 +11,23 @@ library(tidyverse)
 
 b <- 2
 a <- b*7
+
+```
+
+## New Feature
+
+```{r}
+# The code base for the new feature
+x <- sin(5)
 ```
 
 # Chuang
+
 ```{r}
 "Sub is the best captain" |> 
   print()
 ```
+
 ```{r}
 # Load tidyverse
 library(tidyverse)
@@ -72,8 +82,10 @@ print(p)
 
 ## New feature
 
+
 This is a change
 This is a change. Again
+
 
 # Subhayan
 
@@ -88,7 +100,19 @@ list5 <- c("Subh", "Emmanuel", "Chuang", "Reka", "Adomas")
 list5
 ```
 
+## New Analysis
+
+```{r}
+a <- 5
+b <- 7
+a + b
+```
+
 # Reka
+
+
+```{r}
+library(tidyverse)
 
 xy <- seq(from = -3,
           to = 3, 
@@ -104,6 +128,8 @@ expand.grid(x = xy,
              size = 0) +
   theme_void() +
   coord_polar()
+```
+
 
 # Emmanuel
 
@@ -121,5 +147,18 @@ diamonds |>
 	filter(x*y*z<1000) |> 
 	ggplot(aes(x=x*y*z, y=price)) + 
 	geom_point(aes(color=color)) +
+	labs(title="Relation between volume and price in the diamonds dataset (stratified on the color)", x="Volume of the diamond", y="Price of the diamond")
+```
+
+Added markdown
+
+```{r}
+diamonds |> 
+	filter(x*y*z<1000) |> 
+	ggplot(aes(x=x*y*z, y=price)) + 
+	geom_point(aes(color=color)) +
+	facet_grid(~color) +
+  ylim(c(0,20000)) +
+  geom_smooth(aes(color=color), method='lm')
 	labs(title="Relation between volume and price in the diamonds dataset (stratified on the color)", x="Volume of the diamond", y="Price of the diamond")
 ```
