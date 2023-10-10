@@ -87,6 +87,9 @@ list5
 
 # Reka
 
+```{r}
+library(tidyverse)
+
 xy <- seq(from = -3,
           to = 3, 
           by = 0.01)
@@ -101,6 +104,11 @@ expand.grid(x = xy,
              size = 0) +
   theme_void() +
   coord_polar()
+
+xy
+```
+
+
 
 # Emmanuel
 
