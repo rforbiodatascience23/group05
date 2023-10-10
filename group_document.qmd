@@ -11,13 +11,23 @@ library(tidyverse)
 
 b <- 2
 a <- b*7
+
+```
+
+## New Feature
+
+```{r}
+# The code base for the new feature
+x <- sin(5)
 ```
 
 # Chuang
+
 ```{r}
 "Sub is the best captain" |> 
   print()
 ```
+
 ```{r}
 # Load tidyverse
 library(tidyverse)
@@ -69,8 +79,6 @@ for(angle in seq(0, 360-15, by = 15)){
 print(p)
 
 ```
-
-
 
 # Subhayan
 
