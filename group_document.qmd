@@ -80,6 +80,9 @@ print(p)
 
 ```
 
+## New feature
+This is a new feature
+
 # Subhayan
 
 ```{r}
