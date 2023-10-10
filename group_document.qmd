@@ -80,12 +80,6 @@ print(p)
 
 ```
 
-## New feature
-
-
-This is a change
-This is a change. Again
-
 
 # Subhayan
 
@@ -110,7 +104,6 @@ a + b
 
 # Reka
 
-
 ```{r}
 library(tidyverse)
 
@@ -129,6 +122,8 @@ expand.grid(x = xy,
   theme_void() +
   coord_polar()
 ```
+
+#### New feature
 
 
 # Emmanuel
