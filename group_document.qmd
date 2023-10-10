@@ -81,9 +81,11 @@ print(p)
 ```
 
 ## New feature
-This is a new feature. 
-This is a new feature. Agin
-This is a new feature. Again
+
+
+This is a change
+This is a change. Again
+
 
 # Subhayan
 
@@ -127,7 +129,7 @@ expand.grid(x = xy,
   theme_void() +
   coord_polar()
 ```
->>>>>>> main
+
 
 # Emmanuel
 
