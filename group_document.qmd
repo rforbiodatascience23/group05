@@ -14,10 +14,12 @@ a <- b*7
 ```
 
 # Chuang
+
 ```{r}
 "Sub is the best captain" |> 
   print()
 ```
+
 ```{r}
 # Load tidyverse
 library(tidyverse)
@@ -70,8 +72,6 @@ print(p)
 
 ```
 
-
-
 # Subhayan
 
 ```{r}
@@ -105,5 +105,18 @@ diamonds |>
 	filter(x*y*z<1000) |> 
 	ggplot(aes(x=x*y*z, y=price)) + 
 	geom_point(aes(color=color)) +
+	labs(title="Relation between volume and price in the diamonds dataset (stratified on the color)", x="Volume of the diamond", y="Price of the diamond")
+```
+
+Added markdown
+
+```{r}
+diamonds |> 
+	filter(x*y*z<1000) |> 
+	ggplot(aes(x=x*y*z, y=price)) + 
+	geom_point(aes(color=color)) +
+	facet_grid(~color) +
+  ylim(c(0,20000)) +
+  geom_smooth(aes(color=color), method='lm')
 	labs(title="Relation between volume and price in the diamonds dataset (stratified on the color)", x="Volume of the diamond", y="Price of the diamond")
 ```
