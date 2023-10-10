@@ -5,23 +5,14 @@ format: html
 editor: visual
 ---
 
-## Quarto
+## Prologue
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+Q1. There are **295 contributors** to the ggplot package on github
 
-## Running Code
+Q2. There are **14654 contributors** to the linux kernel on GitHub.
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+Q3. Version control needs to be correctly done this way it's possible to work with several people on the same project without interfering with each other.
 
-```{r}
-1 + 1
-```
+## Getting started
 
-You can add options to executable code like this
-
-```{r}
-#| echo: false
-2 * 2
-```
-
-The `echo: false` option disables the printing of code (only output is displayed).
+Q4. GitHub can't let us update the repository because it doesn't know who we are, we need to authentify in order to that.
