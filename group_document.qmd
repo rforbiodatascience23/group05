@@ -87,7 +87,24 @@ list5
 
 # Reka
 
-xy \<- seq(from = -3, to = 3, by = 0.01) expand.grid(x = xy, y = xy) \|\> ggplot( mapping = aes( x = (1 - x - sin(y\^2)), y = (1 + y - cos(x\^2)))) + geom_point(alpha = 0.05, shape = 20, size = 0) + theme_void() + coord_polar()
+```{r}
+library(tidyverse)
+
+xy <- seq(from = -3,
+          to = 3, 
+          by = 0.01)
+expand.grid(x = xy,
+            y = xy) |>
+  ggplot(
+    mapping = aes(
+      x = (1 - x - sin(y^2)),
+      y = (1 + y - cos(x^2)))) +
+  geom_point(alpha = 0.05,
+             shape = 20,
+             size = 0) +
+  theme_void() +
+  coord_polar()
+```
 
 # Emmanuel
 
@@ -105,5 +122,18 @@ diamonds |>
 	filter(x*y*z<1000) |> 
 	ggplot(aes(x=x*y*z, y=price)) + 
 	geom_point(aes(color=color)) +
+	labs(title="Relation between volume and price in the diamonds dataset (stratified on the color)", x="Volume of the diamond", y="Price of the diamond")
+```
+
+Added markdown
+
+```{r}
+diamonds |> 
+	filter(x*y*z<1000) |> 
+	ggplot(aes(x=x*y*z, y=price)) + 
+	geom_point(aes(color=color)) +
+	facet_grid(~color) +
+  ylim(c(0,20000)) +
+  geom_smooth(aes(color=color), method='lm')
 	labs(title="Relation between volume and price in the diamonds dataset (stratified on the color)", x="Volume of the diamond", y="Price of the diamond")
 ```
