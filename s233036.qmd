@@ -16,3 +16,7 @@ Q3. Version control needs to be correctly done this way it's possible to work wi
 ## Getting started
 
 Q4. GitHub can't let us update the repository because it doesn't know who we are, we need to authentify in order to that.
+
+## Your first branching
+
+Q5. On the ggplot2 GitHub page there are **71 branches**.
