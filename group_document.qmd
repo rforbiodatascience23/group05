@@ -14,10 +14,12 @@ a <- b*7
 ```
 
 # Chuang
+
 ```{r}
 "Sub is the best captain" |> 
   print()
 ```
+
 ```{r}
 # Load tidyverse
 library(tidyverse)
@@ -70,8 +72,6 @@ print(p)
 
 ```
 
-
-
 # Subhayan
 
 ```{r}
@@ -86,7 +86,6 @@ list5
 ```
 
 # Reka
-
 
 ```{r}
 library(tidyverse)
@@ -111,7 +110,15 @@ xy
 #f
 ```
 
+#### New feature
 
+Some text
+
+```{r}
+
+a <- 11*8
+a
+```
 
 # Emmanuel
 
