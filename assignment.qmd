@@ -98,3 +98,18 @@ pca_fit |>
   theme(legend.position = "none")
 
 ```
+
+# Adomas
+
+```{r}
+raw_dir <- "data/_raw/"
+data_file <- "gravier.RData"
+
+load(file = str_c(raw_dir, data_file))
+
+gravier <- gravier |> 
+  bind_cols() |> 
+  as_tibble()
+  
+
+```
