@@ -1,0 +1,267 @@
+---
+title: "Lab 7 Assignment: Group 05"
+format:
+  html:
+    embed-resources: true
+editor: visual
+---
+
+# Load libraries
+
+```{r}
+#| message: false
+library(tidyverse)
+library(broom)
+library(cowplot)
+```
+
+# Load data
+
+We use the biopsy data from https://wilkelab.org/classes/SDS348/data_sets/biopsy.csv and the gravier data from https://pubmed.ncbi.nlm.nih.gov/20842727/
+
+```{r}
+#| message: false
+biopsy <- read_csv("/net/pupil1/home/people/s233427/projects/lab07_git_exercises/Data/biopsy.csv")
+gravier <- read_tsv("/net/pupil1/home/people/s233427/projects/lab07_git_exercises/Data/02_gravier_clean.gz")
+```
+
+# PCA
+
+We start by inspecting our datasets.
+
+```{r}
+biopsy |> 
+  sample_n(10)
+```
+
+```{r}
+gravier |>
+  sample_n(10)
+
+```
+
+As the `prcomp()` function used for PCA only takes nummeric column as input. We start by removing all non-numeric attributes from our data. Futhermore, we normalize the data by scale to unit variance using `scale = TRUE`.
+
+```{r}
+pca_fit_biopsy <- biopsy |> 
+  select(where(is.numeric)) |>  # Remove all non-numeric columns
+  prcomp(scale = TRUE) # Perform PCA and scale to unit variance
+
+pca_fit_gravier <- gravier |> 
+  select(where(is.numeric)) |>  # Remove all non-numeric columns
+  prcomp(scale = TRUE) # Perform PCA and scale to unit variance
+
+```
+
+## Visualisation of data in PC coordinates
+
+We then use `augment()` from `broom` to fit the original data to our fitted model. The column containing the fitted coordinates are `.fittedPC1` and `.fittedPC2`. We further stratify by outcome.
+
+### Biopsy
+Looking at the biopsy data plotted on PC1 and PC2, it's pretty clear that PC1 by itself can separate the data into benign and malignant outcomes. High PC1 values typically mean a benign outcome, while low PC1 values suggest a malignant one.
+```{r}
+pca_fit_biopsy |> 
+  augment(biopsy) |>  # add original dataset back in
+  ggplot(aes(.fittedPC1, .fittedPC2, color = outcome)) + 
+  geom_point(size = 1.5) +
+  scale_color_manual(
+    values = c(malignant = "#D55E00", benign = "#0072B2")
+  ) +
+  theme_half_open(12) + background_grid() +
+  labs(title = "Biopsy data project onto PC1 and PC2",
+       y = "PC2",
+       x = "PC1",
+       color = "Outcome") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+### Gravier
+In the Gravier data, it's worth noting that PC1 and PC2 do not provide clear separation of the data points. When the data is projected onto these two principal components, it appears to be quite spread out, and there is no distinct clustering or separation evident in these dimensions.
+
+```{r}
+pca_fit_gravier |> 
+  augment(gravier) |>  # add original dataset back in
+  ggplot(aes(.fittedPC1, .fittedPC2, color = y)) + 
+  geom_point(size = 1.5) +
+  scale_color_manual(
+    values = c(poor = "#D55E00", good = "#0072B2")
+  ) +
+  theme_half_open(12) + background_grid() +
+    labs(title = "Gravier data project onto PC1 and PC2",
+       y = "PC2",
+       x = "PC1",
+       color = "Outcome") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+## Direction of attributes project on 2D PC coordinates
+
+The `tidy()` function from the `broom` package can be used with the `matrix = "rotation"` argument to determine the orientation of attributes projected onto PC1 and PC2.
+
+```{r}
+# extract rotation matrix
+pca_fit %>%
+  tidy(matrix = "rotation")
+```
+### Biopsy
+Looking at the directionality of attributes in the biopsy dataset projected onto PC1 and PC2, it is apparent that high attribute values tend to result in a low projection onto PC1, whereas low attribute values lead to a high projection onto PC1. This suggests an inverse relationship between attribute values and their contribution to PC1.PC2 does a better job of telling attributes apart, with high "mitosis" values correlating to high PC2 projections and low "marginal adhesion" values corresponding to low PC2 projections.
+```{r}
+# define arrow style for plotting
+arrow_style <- arrow(
+  angle = 20, ends = "first", type = "closed", length = grid::unit(8, "pt")
+)
+
+# plot rotation matrix
+pca_fit_biopsy |> 
+  tidy(matrix = "rotation") |> 
+  pivot_wider(names_from = "PC", names_prefix = "PC", values_from = "value") |> 
+  ggplot(aes(PC1, PC2)) +
+  geom_segment(xend = 0, yend = 0, arrow = arrow_style) +
+  geom_text(
+    aes(label = column),
+    hjust = 1, nudge_x = -0.02, 
+    color = "#904C2F"
+  ) +
+  xlim(-1.25, .5) + ylim(-.5, 1) +
+  coord_fixed() + # fix aspect ratio to 1:1
+  theme_minimal_grid(12)
+```
+
+### Gravier
+Since the Gravier dataset contains a substantial 2906 attributes, we'll take a random sample of 20 attributes to observe their behavior when projected onto PC1 and PC2. What we notice is that certain genes with high values coincide with high PC1 and PC2 values, while others with high values correspond to low PC1 and PC2 values. This underscores the fact that various genes have distinct impacts on PC1 and PC2.
+```{r}
+gravier |> 
+  ncol()
+```
+```{r}
+# plot rotation matrix
+pca_fit_gravier |> 
+  tidy(matrix = "rotation") |> 
+  pivot_wider(names_from = "PC", names_prefix = "PC", values_from = "value") |> 
+  sample_n(20) |> 
+  ggplot(aes(PC1, PC2)) +
+  geom_segment(xend = 0, yend = 0, arrow = arrow_style) +
+  geom_text(
+    aes(label = column),
+    hjust = 0, nudge_x = 0.01, 
+    color = "#904C2F"
+  ) +
+  xlim(-.07, .07) + ylim(-.07, .07) +
+  coord_fixed() + # fix aspect ratio to 1:1
+  theme_minimal_grid(12)
+```
+
+## Variance Explained by Principle Components
+
+We can use `tidy(matrix = "eigenvalue")` from the `broom` module to compute the percentage of variance explained for our dataset by each of the principle component from the PCA.
+
+```{r}
+pca_fit_biopsy |> 
+  tidy(matrix = "eigenvalues")
+```
+
+### Biopsy
+
+We initially look at the biopsy data, where 10 principle components are obtained from the PCA.
+
+```{r}
+pca_fit_biopsy |> 
+  tidy(matrix = "eigenvalues") |> 
+  nrow()
+```
+
+Looking at the % of variance explained by each principal component. We observe that PC1 alone explained \~60% of the variance in our dataset, while the PC2 only explains 10% of the variance in our dataset.
+
+```{r}
+pca_fit_biopsy |> 
+  tidy(matrix = "eigenvalues") |> 
+  ggplot(aes(PC, percent)) +
+  geom_col(fill = "#56B4E9", alpha = 0.8) +
+  scale_x_continuous(breaks = 1:10) +
+  scale_y_continuous(
+    # Convert labels to % by multiple by 100
+    labels = scales::percent_format(),
+    #Specifies that the lower limit of y should have 0 times the range 
+    # added below minimum and the upper limit of y should have 0.02 times 
+    # the range added above maximum
+    expand = expansion(mult = c(0, 0.02)) 
+  ) +
+  theme_minimal_hgrid(12) +
+  labs(title = "% of variance explained by top 20 PCs in Biopsy data") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+When examining the cumulative percentage of variance explained by the first 10 principal components, it becomes evident that PC1 and PC2 combined explain approximately 70% of the variance in our dataset. Moreover, the first 6 principal components, when considered together, account for approximately 90% of the variance in our dataset.
+
+```{r}
+pca_fit_biopsy |> 
+  tidy(matrix = "eigenvalues") |> 
+  ggplot(aes(PC, cumulative)) +
+  geom_line() +
+  geom_point() +
+  geom_hline(yintercept = 0.9, color = "red", linetype = "dashed") + 
+  scale_x_continuous(breaks = 1:10) +
+  scale_y_continuous(limits = c(0, 1), 
+                     expand = expansion(mult = c(0, 0.1))) + 
+  theme_minimal_hgrid(12) +
+  labs(title = "Cumulative % of variance explained by the top 20 PCs in Biopsy data",
+       subtitle = "Red line marks threshold at 0.9",
+       y = "% of variance explained") +
+  theme(plot.title = element_text(hjust = 0.5), 
+        plot.subtitle = element_text(hjust = 0.5)) +
+
+```
+
+### Gravier
+
+We will focus on analyzing the Gravier dataset, which initially produced 168 principal components through PCA (Principal Component Analysis). However, to simplify our visualizations and prevent overcrowding, we will narrow our attention to examining only the first 20 principal components.
+
+```{r}
+pca_fit_gravier |> 
+  tidy(matrix = "eigenvalues") |> 
+  nrow()
+```
+
+When we create a plot depicting the variance explained by each individual principal component, we notice that the maximum variance explained by a single PC is approximately 8.5%.
+
+```{r}
+pca_fit_gravier |> 
+  tidy(matrix = "eigenvalues") |> 
+  slice(1:20) |> 
+  ggplot(aes(PC, percent)) +
+  geom_col(fill = "purple", alpha = 0.5) +
+  scale_x_continuous(breaks = 1:20) +
+  scale_y_continuous(
+    # Convert labels to % by multiple by 100
+    labels = scales::percent_format(),
+    #Specifies that the lower limit of y should have 0 times the range 
+    # added below minimum and the upper limit of y should have 0.02 times 
+    # the range added above maximu
+    expand = expansion(mult = c(0, 0.02)) 
+  ) +
+  theme_minimal_hgrid(12) +
+  labs(title = "% of variance explained by top 20 PCs in Gravier data") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+Looking at the cumulative percentage of variance explained by the first 20 principle components. We can see that PC1 and PC2 alone explain less than 20% of the variance in our dataset. Even when we consider all of the top 20 principle componenets, the cumulative variance explained remains below 60% for our dataset.
+
+```{r}
+pca_fit_gravier |> 
+  tidy(matrix = "eigenvalues") |> 
+  slice(1:20) |> 
+  ggplot(aes(PC, cumulative)) +
+  geom_line() +
+  geom_point() +
+  geom_hline(yintercept = 0.9, color = "red", linetype = "dashed") + 
+  scale_x_continuous(breaks = 1:20) +
+  scale_y_continuous(limits = c(0, 1), 
+                     expand = expansion(mult = c(0, 0.1))) + 
+  theme_minimal_hgrid(12) + 
+  labs(title = "Cumulative % of variance explained by the top 20 PCs in Gravier data",
+       subtitle = "Red line marks threshold at 0.9",
+       y = "% of variance explained") +
+  theme(plot.title = element_text(hjust = 0.5), 
+        plot.subtitle = element_text(hjust = 0.5))
+
+```
