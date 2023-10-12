@@ -53,12 +53,14 @@ pca_fit_gravier <- gravier |>
 
 ```
 
-## Visualisation of data in PC coordinates
+## Projection of dataset onto PC1 and PC2
 
 We then use `augment()` from `broom` to fit the original data to our fitted model. The column containing the fitted coordinates are `.fittedPC1` and `.fittedPC2`. We further stratify by outcome.
 
 ### Biopsy
+
 Looking at the biopsy data plotted on PC1 and PC2, it's pretty clear that PC1 by itself can separate the data into benign and malignant outcomes. High PC1 values typically mean a benign outcome, while low PC1 values suggest a malignant one.
+
 ```{r}
 pca_fit_biopsy |> 
   augment(biopsy) |>  # add original dataset back in
@@ -74,7 +76,9 @@ pca_fit_biopsy |>
        color = "Outcome") +
   theme(plot.title = element_text(hjust = 0.5))
 ```
+
 ### Gravier
+
 In the Gravier data, it's worth noting that PC1 and PC2 do not provide clear separation of the data points. When the data is projected onto these two principal components, it appears to be quite spread out, and there is no distinct clustering or separation evident in these dimensions.
 
 ```{r}
@@ -102,8 +106,11 @@ The `tidy()` function from the `broom` package can be used with the `matrix = "r
 pca_fit %>%
   tidy(matrix = "rotation")
 ```
+
 ### Biopsy
+
 Looking at the directionality of attributes in the biopsy dataset projected onto PC1 and PC2, it is apparent that high attribute values tend to result in a low projection onto PC1, whereas low attribute values lead to a high projection onto PC1. This suggests an inverse relationship between attribute values and their contribution to PC1.PC2 does a better job of telling attributes apart, with high "mitosis" values correlating to high PC2 projections and low "marginal adhesion" values corresponding to low PC2 projections.
+
 ```{r}
 # define arrow style for plotting
 arrow_style <- arrow(
@@ -127,11 +134,14 @@ pca_fit_biopsy |>
 ```
 
 ### Gravier
+
 Since the Gravier dataset contains a substantial 2906 attributes, we'll take a random sample of 20 attributes to observe their behavior when projected onto PC1 and PC2. What we notice is that certain genes with high values coincide with high PC1 and PC2 values, while others with high values correspond to low PC1 and PC2 values. This underscores the fact that various genes have distinct impacts on PC1 and PC2.
+
 ```{r}
 gravier |> 
   ncol()
 ```
+
 ```{r}
 # plot rotation matrix
 pca_fit_gravier |> 
