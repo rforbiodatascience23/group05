@@ -9,6 +9,7 @@ editor: visual
 # Load libraries
 
 ```{r}
+#| message: false
 library(tidyverse)
 library(broom)
 library(cowplot)
@@ -20,10 +21,8 @@ We use the biopsy data from https://wilkelab.org/classes/SDS348/data_sets/biopsy
 
 ```{r}
 biopsy <- read_csv("/net/pupil1/home/people/s233427/projects/lab07_git_exercises/Data/biopsy.csv")
-gravier <- load("/net/pupil1/home/people/s233427/projects/lab07_git_exercises/Data/gravier.RData")
-gravier
+gravier <- read_tsv("/net/pupil1/home/people/s233427/projects/lab07_git_exercises/Data/02_gravier_clean.gz")
 ```
-
 
 # PCA
 We start by insepecting our data
@@ -33,9 +32,11 @@ biopsy |>
 ```
 
 ```{r}
-gravier
-```
+gravier |>
+  select(y) |> 
+  sample_n(10)
 
+```
 
 
 As the `prcomp()` function used for PCA only takes nummeric column as input. We start by removing all non-numeric attributes from our data. Futhermore, we normalize the data by scale to unit variance using `scale = TRUE`.
@@ -50,3 +51,50 @@ pca_fit_gravier <- gravier |>
   prcomp(scale = TRUE) # Perform PCA and scale to unit variance
 
 ```
+
+## Visualisation of data in PC coordinates
+We then use `augment()` from `broom` to fit the original data to our fitted model. The column cotaining the fitted coordinates are `.fittedPC1` and `.fittedPC2`. We further stratify by outcome. 
+
+```{r}
+pca_fit_biopsy |> 
+  augment(biopsy) |>  # add original dataset back in
+  ggplot(aes(.fittedPC1, .fittedPC2, color = outcome)) + 
+  geom_point(size = 1.5) +
+  scale_color_manual(
+    values = c(malignant = "#D55E00", benign = "#0072B2")
+  ) +
+  theme_half_open(12) + background_grid()
+```
+```{r}
+pca_fit_gravier |> 
+  augment(gravier) |>  # add original dataset back in
+  ggplot(aes(.fittedPC1, .fittedPC2, color = y)) + 
+  geom_point(size = 1.5) +
+  scale_color_manual(
+    values = c(poor = "#D55E00", good = "#0072B2")
+  ) +
+  theme_half_open(12) + background_grid()
+```
+## Visualization of attribute direction in 2D PC coordinates
+```{r}
+# define arrow style for plotting
+arrow_style <- arrow(
+  angle = 20, ends = "first", type = "closed", length = grid::unit(8, "pt")
+)
+
+# plot rotation matrix
+pca_fit_biopsy %>%
+  tidy(matrix = "rotation") %>%
+  pivot_wider(names_from = "PC", names_prefix = "PC", values_from = "value") %>%
+  ggplot(aes(PC1, PC2)) +
+  geom_segment(xend = 0, yend = 0, arrow = arrow_style) +
+  geom_text(
+    aes(label = column),
+    hjust = 1, nudge_x = -0.02, 
+    color = "#904C2F"
+  ) +
+  xlim(-1.25, .5) + ylim(-.5, 1) +
+  coord_fixed() + # fix aspect ratio to 1:1
+  theme_minimal_grid(12)
+```
+
