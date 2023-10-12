@@ -72,9 +72,9 @@ pca_fit |>
 ### Variance explained by the principal components
 
 ```{r fig.width = 6}
-pca_fit %>%
+pca_fit |>
   # Selecting eigenvalues matrix because it contains the percent explain by each PC
-  tidy(matrix = "eigenvalues") %>%
+  tidy(matrix = "eigenvalues") |>
   ggplot(aes(PC, percent)) +
   geom_col(fill = "#56B4E9", alpha = 0.8) +
   scale_x_continuous(breaks = 1:9) +
@@ -82,4 +82,18 @@ pca_fit %>%
     labels = scales::percent_format(),
     expand = expansion(mult = c(0, 0.01))
   )
+```
+
+```{r}
+pca_fit |>
+  # Selecting eigenvalues matrix because it contains the percent explain by each PC
+  tidy(matrix = "eigenvalues") |>
+  ggplot(aes(x = PC, y = cumulative)) +
+  # 90% variance explained line
+  geom_hline(aes(yintercept = 0.9), color = 'red') +
+  geom_line() + 
+  geom_point(aes(color = PC)) +
+  scale_x_continuous(breaks = 1:9) + 
+  ylim(0,1)
+
 ```
