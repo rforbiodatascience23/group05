@@ -94,6 +94,7 @@ pca_fit |>
   geom_line() + 
   geom_point(aes(color = PC)) +
   scale_x_continuous(breaks = 1:9) + 
-  ylim(0,1)
+  ylim(0,1) +
+  theme(legend.position = "none")
 
 ```
