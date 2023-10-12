@@ -7,9 +7,46 @@ editor: visual
 ---
 
 # Load libraries
+
 ```{r}
 library(tidyverse)
 library(broom)
 library(cowplot)
 ```
 
+# Load data
+
+We use the biopsy data from https://wilkelab.org/classes/SDS348/data_sets/biopsy.csv and the gravier data from https://pubmed.ncbi.nlm.nih.gov/20842727/
+
+```{r}
+biopsy <- read_csv("/net/pupil1/home/people/s233427/projects/lab07_git_exercises/Data/biopsy.csv")
+gravier <- load("/net/pupil1/home/people/s233427/projects/lab07_git_exercises/Data/gravier.RData")
+gravier
+```
+
+
+# PCA
+We start by insepecting our data
+```{r}
+biopsy |> 
+  sample_n(10)
+```
+
+```{r}
+gravier
+```
+
+
+
+As the `prcomp()` function used for PCA only takes nummeric column as input. We start by removing all non-numeric attributes from our data. Futhermore, we normalize the data by scale to unit variance using `scale = TRUE`.
+
+```{r}
+pca_fit_biopsy <- biopsy |> 
+  select(where(is.numeric)) |>  # Remove all non-numeric columns
+  prcomp(scale = TRUE) # Perform PCA and scale to unit variance
+
+pca_fit_gravier <- gravier |> 
+  select(where(is.numeric)) |>  # Remove all non-numeric columns
+  prcomp(scale = TRUE) # Perform PCA and scale to unit variance
+
+```
