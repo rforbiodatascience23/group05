@@ -1,0 +1,15 @@
+---
+title: "Lab 7 Assignment: Group 05"
+format:
+  html:
+    embed-resources: true
+editor: visual
+---
+
+# Load libraries
+```{r}
+library(tidyverse)
+library(broom)
+library(cowplot)
+```
+
