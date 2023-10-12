@@ -101,15 +101,83 @@ pca_fit |>
 
 # Adomas
 
+### Load Libraries
+
+```{r}
+#| eval: FALSE
+#| message: FALSE
+library(tidyverse)
+library(broom)
+```
+
+### Load Data
+
 ```{r}
 raw_dir <- "data/_raw/"
 data_file <- "gravier.RData"
 
 load(file = str_c(raw_dir, data_file))
-
-gravier <- gravier |> 
-  bind_cols() |> 
-  as_tibble()
-  
-
 ```
+
+### Prepare Data
+
+```{r}
+# Dataset preparation
+set.seed(676571)
+cancer_data = mutate(as_tibble(pluck(gravier,"x")),
+                     y=pluck(gravier,"y"),
+                     pt_id=1:length(pluck(gravier, "y")),
+                     age=round(rnorm(length(pluck(gravier,"y")),
+                                     mean=55,sd=10),1))
+cancer_data = rename(cancer_data,event_label=y)
+cancer_data$age_group = cut(cancer_data$age,breaks=seq(10,100,by=10))
+cancer_data = relocate(cancer_data,c(pt_id,age,age_group,pt_id,event_label))
+```
+
+### Perform PCA
+
+```{r}
+pca_fit <- cancer_data  |>  
+  select(where(is.numeric)) |>  # retain only numeric columns
+  select(!c(pt_id, age)) |> 
+  prcomp(scale = TRUE) # do PCA on scaled data
+```
+
+## Visualize Data
+
+### Plot data in principal coordinates
+
+```{r}
+pca_fit |> 
+  augment(cancer_data)  |>  # add original dataset back in
+  ggplot(aes(.fittedPC1, .fittedPC2, color = event_label)) + 
+  geom_point(size = 1.5) +
+  # scale_color_manual(
+  #  values = c(malignant = "#D55E00", benign = "#0072B2")
+  # ) +
+  xlab('PC1') +
+  ylab('PC2') +
+  ggtitle('Cancer dataset projection onto PC 1 and 2') +
+  guides(color = guide_legend(title = "Outcome")) +
+  theme_minimal() 
+```
+
+We did not achieve any clear separation of the cancer outcomes. To further evaluate if the PCA yielded valuable dimensionality reduction for our dataset, we should look into the variance covered by each PC.
+
+### Plot %variance explained by PC's
+
+```{r}
+pca_fit |> 
+  tidy(matrix = "eigenvalues") %>%
+  ggplot(aes(PC, percent)) +
+  geom_col(fill = "#56B4E9", alpha = 0.8) +
+  #scale_x_continuous(breaks = 1:9) +
+  scale_y_continuous(
+    labels = scales::percent_format(),
+    expand = expansion(mult = c(0, 0.01))
+  ) +
+  ggtitle('% variance explained by principal components') +
+  theme_minimal()
+```
+
+Only 8% of variance is explained by PC1, with all other PC's trailing well below that. However, given that over 2000 genes are analysed, it is not surprising that the variance cannot be explained by only few PC's.
